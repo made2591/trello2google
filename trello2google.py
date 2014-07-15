@@ -8,6 +8,7 @@ import gcal
 import trello
 import json
 
+
 def trelloSync(gInstance, tInstance):
     # json di eventi di trello
     trelloDict = tInstance.get_dict_of_dated_cards()
@@ -19,7 +20,7 @@ def trelloSync(gInstance, tInstance):
     for trellokey in trelloDict:
         idEvento = trelloDict[trellokey].get("id")
         # TIME FORMAT: %Y-%m-%dT%H:%M:%S.000Z
-        time = trelloDict[trellokey].get("date")+"T"+trelloDict[trellokey].get("hour")
+        time = trelloDict[trellokey].get("date") + "T" + trelloDict[trellokey].get("hour")
         #print trelloDict[trellokey]
         cl = trelloDict[trellokey].get("checkList")
         ev = googleDict.get(idEvento, "")
@@ -33,7 +34,7 @@ def trelloSync(gInstance, tInstance):
         else:
             # aggiorna le info dell'evento
             googleInstance.updateTrelloEvent(prova, name=trellokey, date=time, id=idEvento, checklist=cl)
-            del(googleDict[idEvento])
+            del (googleDict[idEvento])
 
     for eventKey in googleDict:
         ev = googleDict.get(eventKey, "")
@@ -42,8 +43,11 @@ def trelloSync(gInstance, tInstance):
 
         googleInstance.removeEvent(prova)
 
+
 if __name__ == "__main__":
+    print "Eventi aggiunti al calendario: "
     googleInstance = gcal.Google()
     trelloInstance = trello.Trello()
 
     trelloSync(googleInstance, trelloInstance)
+    print "Processo completato"

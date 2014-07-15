@@ -30,6 +30,6 @@ FOREVER_TOKEN = "TODO"
 # Get your board id from Trello URL: https://trello.com/b/____BOARD-ID____/title-of-board
 # Visit your board from a browser, and copy the ___BOARD-ID___ string.
 BOARDS = {
-    'Board One' : 'TODOfecdd2e8a35469000zzz',
-    'Board Two' : 'TODOffa426a6793f36001zzz',
+    'Board One': 'TODOfecdd2e8a35469000zzz',
+    'Board Two': 'TODOffa426a6793f36001zzz',
 }

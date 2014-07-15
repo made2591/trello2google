@@ -1,0 +1,5 @@
+.gitignore
+.idea/
+*.pyc
+config-personal.py
+.DS_Store

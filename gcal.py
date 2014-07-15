@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# TODO impostare il sync bidirezionale: cancella eventi vecchi e aggiunge nuovi
+
 __author__ = 'valentinarho'
 
 try:
     from xml.etree import ElementTree # for Python 2.5 users
 except ImportError:
     from elementtree import ElementTree
+
 import gdata.calendar.service
 import gdata.service
 import atom.service
@@ -19,8 +22,8 @@ LUNGHEZZAID = 24
 NOME_SERVIZIO = 'GCal-python-test'
 debug = True
 
-class Google(object):
 
+class Google(object):
     def __init__(self, email=config.EMAIL, psw=config.PASS, trelloCalendarName=config.NOME_CALENDARIO):
         # inizializza i campi dell'utente
         self.email = email
@@ -34,13 +37,14 @@ class Google(object):
         self.calendarInstance = self.retrieveTrelloCalendarInstance();
 
         # codice identificativo dell'utente
-        self.calendarUserID = self.calendarInstance.content.src.split('/')[5].replace('%40','@')
+        self.calendarUserID = self.calendarInstance.content.src.split('/')[5].replace('%40', '@')
 
         # URI del calendario di trello su google
-        self.trelloCalendarUri = "http://www.google.com/calendar/feeds/"+self.calendarUserID+"/private/full-noattendees"
+        self.trelloCalendarUri = "http://www.google.com/calendar/feeds/" + self.calendarUserID + "/private/full-noattendees"
 
 
     """ Effettua il login dell'utente a Google Calendar """
+
     def login(self, mail, psw, nome_servizio):
         calendar_service = gdata.calendar.service.CalendarService()
         calendar_service.email = mail
@@ -53,12 +57,13 @@ class Google(object):
         calendarInstance = None
         calendarInstance = self.existsCalendar(self.trelloCalendarName)
 
-        if calendarInstance == None :
+        if calendarInstance == None:
             calendarInstance = self.createTrelloCalendar(self.trelloCalendarName)
 
         return calendarInstance
 
     """ return il l'istanza di un calendario se il calendario 'calendarName' esiste, None altrimenti """
+
     def existsCalendar(self, calendarName):
         feed = self.calendarService.GetOwnCalendarsFeed()
 
@@ -69,6 +74,7 @@ class Google(object):
         return None
 
     """ crea il calendario di trello su gCal """
+
     def createTrelloCalendar(self, calendarName):
         # Create the calendar
         calendar = gdata.calendar.CalendarListEntry()
@@ -81,6 +87,7 @@ class Google(object):
         return trellocalendar;
 
     """ Stampa a video i calendari dell'utente """
+
     def printUserCalendars(self, calendar_service):
         feed = calendar_service.GetOwnCalendarsFeed()
         print feed.title.text
@@ -89,6 +96,7 @@ class Google(object):
 
 
     """ Inserisce un nuovo evento nel calendario di trello """
+
     def insertSingleEvent(self, title,
                           content='', where='',
                           start_time=None, end_time=None):
@@ -112,7 +120,7 @@ class Google(object):
     def insertTrelloEvent(self, name, date, id, checklist):
         cont = ""
         if checklist != None:
-            for k  in checklist:
+            for k in checklist:
                 cont = cont + "\n\n" + k
                 list = checklist[k]
                 for item in list:
@@ -123,7 +131,7 @@ class Google(object):
                     else:
                         cont += "(TODO) "
                     cont += item
-        cont = cont+"\n\n\n\n "+id
+        cont = cont + "\n\n\n\n " + id
         self.insertSingleEvent(name, content=cont, start_time=date)
 
     def updateTrelloEvent(self, event, name, date, id, checklist):
@@ -132,7 +140,7 @@ class Google(object):
         cont = ""
 
         if checklist != None:
-            for k  in checklist:
+            for k in checklist:
                 cont = cont + "\n\n" + k
                 list = checklist[k]
                 for item in list:
@@ -149,12 +157,14 @@ class Google(object):
         return self.calendarService.UpdateEvent(event.GetEditLink().href, event)
 
     """ Cancella un evento dal calendario di trello """
+
     def removeEvent(self, event):
         self.calendarService.DeleteEvent(event.GetEditLink().href)
 
     #def getEvent(self, title='', trelloCode=''):
 
     """ Ritorna un dizionario con chiave = 'codice di trello' e informazioni sull'evento """
+
     def getCalendarEvents(self):
         eventlist = {}
         eventfeed = self.calendarService.GetCalendarEventFeed(self.trelloCalendarUri)
@@ -162,10 +172,9 @@ class Google(object):
             if a_event.content.text != None:
                 lungh = len(a_event.content.text)
                 #eventlist[a_event.content.text[lungh-LUNGHEZZAID:lungh]] = {'title': a_event.title.text, 'description': a_event.content.text[0:lungh-LUNGHEZZAID]}
-                eventlist[a_event.content.text[lungh-LUNGHEZZAID:lungh]] = {a_event}
-        #print eventlist
+                eventlist[a_event.content.text[lungh - LUNGHEZZAID:lungh]] = {a_event}
+            #print eventlist
         return eventlist;
-
 
 
 if __name__ == "__main__":

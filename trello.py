@@ -9,6 +9,7 @@ import urllib2
 import json
 import config
 
+
 class Trello(object):
     """ Questa classe istanzia un oggetto Trello che gestisce la comunicazione con il server
     """
@@ -20,12 +21,15 @@ class Trello(object):
         self.boards_list = boards_list
 
     """ Questo metodo ritorna il dizionario di board definito sopra"""
+
     def get_boards_of_user(self):
         return self.boards_list
 
     """ Questo metodo ritorna un dizionario delle liste di una board specifica"""
+
     def get_lists_of_board(self, board_id):
-        dict = self.get_dict_from_json(self.get_json_response("https://api.trello.com/1/board/"+board_id+"?key="+self.key+"&token="+self.token+"&lists=all"))
+        dict = self.get_dict_from_json(self.get_json_response(
+            "https://api.trello.com/1/board/" + board_id + "?key=" + self.key + "&token=" + self.token + "&lists=all"))
         lists = {}
         for list in dict['lists']:
             lists[list['name']] = list['id']
@@ -33,15 +37,17 @@ class Trello(object):
         return lists
 
     """ Questo metodo ritorna un dizionario delle cards di una lista specifica (card ancora aperte)"""
+
     def get_cards_of_list(self, list_id):
-        dict = self.get_dict_from_json(self.get_json_response("https://api.trello.com/1/lists/"+list_id+"?key="+self.key+"&token="+self.token+"&cards=all"))
+        dict = self.get_dict_from_json(self.get_json_response(
+            "https://api.trello.com/1/lists/" + list_id + "?key=" + self.key + "&token=" + self.token + "&cards=all"))
         cards = {}
         for card in dict['cards']:
 
             if card['closed'] == False:
 
                 # Aggiungo l'id della card trovata
-                cards[card['name']] = { 'id' : card['id']}
+                cards[card['name']] = {'id': card['id']}
 
                 # Controllo se la card ha un data di scadenza
                 if card['due'] != None:
@@ -66,13 +72,15 @@ class Trello(object):
         return cards
 
     """ Questa funzione restituisce un dizionario di checklist (dizionari di check item) di una data card"""
+
     def get_checklist_item(self, array_of_checklist):
 
         checklist = {}
 
         for i in array_of_checklist:
 
-            checkitems = self.get_dict_from_json(self.get_json_response("https://api.trello.com/1/checklists/"+i+"?key="+self.key+"&token="+self.token))
+            checkitems = self.get_dict_from_json(self.get_json_response(
+                "https://api.trello.com/1/checklists/" + i + "?key=" + self.key + "&token=" + self.token))
             checkitem = {}
             for k in checkitems['checkItems']:
                 checkitem[k['name']] = k['state']
@@ -81,7 +89,7 @@ class Trello(object):
 
         return checklist
 
-    def get_json_response(self,url):
+    def get_json_response(self, url):
         response = urllib2.urlopen(url)
         return response.read()
 
