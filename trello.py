@@ -3,15 +3,15 @@
 
 __author__ = 'matteomadeddu'
 
-# TODO fare retrieve del codice della board in automatico
+# TODO Implement the automatic retrieve of the Trello board code
 
 import urllib2
 import json
 import config
 
-
 class Trello(object):
-    """ Questa classe istanzia un oggetto Trello che gestisce la comunicazione con il server
+    """
+    Class that handles communications with the Trello server
     """
 
     def __init__(self, key=config.KEY, secret=config.SECRET, token=config.FOREVER_TOKEN, boards_list=config.BOARDS):
@@ -20,14 +20,19 @@ class Trello(object):
         self.token = token
         self.boards_list = boards_list
 
-    """ Questo metodo ritorna il dizionario di board definito sopra"""
-
     def get_boards_of_user(self):
+        """
+        Returns the dictionary of all user's boards.
+        :return:
+        """
         return self.boards_list
 
-    """ Questo metodo ritorna un dizionario delle liste di una board specifica"""
-
     def get_lists_of_board(self, board_id):
+        """
+        Returns all lists contained in the specified board
+        :param board_id: the board identifier
+        :return:
+        """
         dict = self.get_dict_from_json(self.get_json_response(
             "https://api.trello.com/1/board/" + board_id + "?key=" + self.key + "&token=" + self.token + "&lists=all"))
         lists = {}
@@ -36,9 +41,12 @@ class Trello(object):
 
         return lists
 
-    """ Questo metodo ritorna un dizionario delle cards di una lista specifica (card ancora aperte)"""
-
     def get_cards_of_list(self, list_id):
+        """
+        Returns a dictionary of all cards contained in the specified list
+        :param list_id: the list identifier
+        :return:
+        """
         dict = self.get_dict_from_json(self.get_json_response(
             "https://api.trello.com/1/lists/" + list_id + "?key=" + self.key + "&token=" + self.token + "&cards=all"))
         cards = {}
@@ -46,10 +54,10 @@ class Trello(object):
 
             if card['closed'] == False:
 
-                # Aggiungo l'id della card trovata
+                # add the card id
                 cards[card['name']] = {'id': card['id']}
 
-                # Controllo se la card ha un data di scadenza
+                # check due date
                 if card['due'] != None:
                     time = str(card['due']).split("T")
                     day = str(time[0])
@@ -57,23 +65,26 @@ class Trello(object):
                     cards[card['name']]['date'] = day
                     cards[card['name']]['hour'] = hour
 
-                # Controllo se la card ha una descrizione
+                # check description
                 if card['desc'] != "":
                     cards[card['name']]['description'] = card['desc']
 
-                # Controllo se nella card c'è una check list
+                # check checklist
                 if len(card['idChecklists']) != 0:
                     cards[card['name']]['idChecklists'] = card['idChecklists']
 
-                # Controllo se nella card ci sono delle label
+                # check labels
                 if len(card['labels']) != 0:
                     cards[card['name']]['labels'] = card['labels']
 
         return cards
 
-    """ Questa funzione restituisce un dizionario di checklist (dizionari di check item) di una data card"""
-
     def get_checklist_item(self, array_of_checklist):
+        """
+        Returns a dictionary of checklists of a card. Each checklist is a dictionary of check items.
+        :param array_of_checklist:
+        :return:
+        """
 
         checklist = {}
 
@@ -97,7 +108,6 @@ class Trello(object):
         return json.loads(json_data)
 
     def get_dict_of_dated_cards(self):
-
         cards_dict = {}
 
         for name, value in self.boards_list.items():

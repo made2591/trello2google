@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__author__ = 'valentinarho'
 __author__ = 'matteomadeddu'
+__author__ = 'valentinarho'
 
 ##### GOOGLE CALENDAR CONFIGURATION
 
@@ -12,7 +12,7 @@ PASS = 'password'
 
 # Define the name for the calendar dedicated to Trello events and trello2google app.
 # if the calendar not exists the app will create it for you!
-NOME_CALENDARIO = 'Trello Events'
+CALENDAR_NAME = 'Trello Events'
 
 ##### TRELLO CONFIGURATION
 
