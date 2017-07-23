@@ -1,7 +1,7 @@
 trello2google
 =============
 
-A Python script that syncs Trello cards that have a due date with a personal calendar in Google Calendar.
+A Python script that syncs Trello cards that have a due date with a personal calendar in Google Calendar. Many thanks to @valentinarho
 
 ### Usage
 
